@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/KatherineEbel/bookstore_oauth-api/src/clients/cassandra"
 	"github.com/KatherineEbel/bookstore_oauth-api/src/domain/accessToken"
 	h "github.com/KatherineEbel/bookstore_oauth-api/src/http"
 	"github.com/KatherineEbel/bookstore_oauth-api/src/repository/db"
@@ -15,6 +16,11 @@ var (
 )
 
 func Start() {
+	session, dbErr := cassandra.GetSession()
+	if dbErr != nil {
+		log.Fatalln(dbErr)
+	}
+	defer session.Close()
 	tokenHandler := h.Handler(accessToken.Service(db.Repository()))
 	router.GET("/oauth/accessToken/:id", tokenHandler.GetById)
 	if err := router.Run(":8080"); err != nil {
