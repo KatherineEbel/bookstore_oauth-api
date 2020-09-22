@@ -17,7 +17,7 @@ func TestGetNewAccessToken_NotExpired(t *testing.T) {
 
 func TestGetNewAccessToken_TokenStringIsEmpty(t *testing.T) {
 	tok := GetNewAccessToken()
-	assert.Empty(t, tok.Token, "new access token should not have token id")
+	assert.Empty(t, tok.AccessToken, "new access token should not have token id")
 }
 
 func TestGetNewAccessToken_UserIdIsNil(t *testing.T) {

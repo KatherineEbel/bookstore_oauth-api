@@ -9,14 +9,32 @@ import (
 
 type IRepository interface {
 	GetById(string) (*AccessToken, *errors.RestError)
+	Create(AccessToken) *errors.RestError
+	UpdateExpirationTime(token AccessToken) *errors.RestError
 }
 
 type IService interface {
 	GetBId(string) (*AccessToken, *errors.RestError)
+	Create(AccessToken) *errors.RestError
+	UpdateExpirationTime(AccessToken) *errors.RestError
 }
 
 type service struct {
 	repository IRepository
+}
+
+func (s *service) Create(t AccessToken) *errors.RestError {
+	if err := t.Validate(); err != nil {
+		return err
+	}
+	return s.repository.Create(t)
+}
+
+func (s *service) UpdateExpirationTime(t AccessToken) *errors.RestError {
+	if err := t.Validate(); err != nil {
+		return err
+	}
+	return s.repository.UpdateExpirationTime(t)
 }
 
 func Service(repo IRepository) IService {
