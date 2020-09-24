@@ -15,15 +15,15 @@ const (
 )
 
 type IDBRepository interface {
-	GetById(string) (*accessToken.AccessToken, *errors.RestError)
-	Create(accessToken.AccessToken) *errors.RestError
-	UpdateExpirationTime(accessToken.AccessToken) *errors.RestError
+	GetById(string) (*accessToken.Token, *errors.RestError)
+	Create(accessToken.Token) *errors.RestError
+	UpdateExpirationTime(accessToken.Token) *errors.RestError
 }
 
 type dbRepository struct {
 }
 
-func (r *dbRepository) UpdateExpirationTime(t accessToken.AccessToken) *errors.RestError {
+func (r *dbRepository) UpdateExpirationTime(t accessToken.Token) *errors.RestError {
 	db := cassandra.GetSession()
 	if err := db.Query(updateExpirationQuery, t.AccessToken, t.UserId, t.ClientId, t.Expires).Exec(); err != nil {
 		return errors.NewDatabaseError()
@@ -35,9 +35,9 @@ func Repository() IDBRepository {
 	return &dbRepository{}
 }
 
-func (r *dbRepository) GetById(id string) (*accessToken.AccessToken, *errors.RestError) {
+func (r *dbRepository) GetById(id string) (*accessToken.Token, *errors.RestError) {
 	session := cassandra.GetSession()
-	var t accessToken.AccessToken
+	var t accessToken.Token
 	err := session.Query(getTokenQuery, id).Scan(&t.AccessToken, &t.UserId, &t.ClientId, &t.Expires)
 	if err != nil {
 		log.Println(err)
@@ -46,7 +46,7 @@ func (r *dbRepository) GetById(id string) (*accessToken.AccessToken, *errors.Res
 	return &t, nil
 }
 
-func (r *dbRepository) Create(t accessToken.AccessToken) *errors.RestError {
+func (r *dbRepository) Create(t accessToken.Token) *errors.RestError {
 	session := cassandra.GetSession()
 	if err := session.Query(createTokenQuery, t.AccessToken, t.UserId, t.ClientId, t.Expires).Exec(); err != nil {
 		log.Println(err)

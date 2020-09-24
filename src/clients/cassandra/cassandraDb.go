@@ -1,6 +1,7 @@
 package cassandra
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gocql/gocql"
@@ -19,6 +20,7 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	fmt.Println("Cassandra session extablished...")
 }
 
 func GetSession() *gocql.Session {

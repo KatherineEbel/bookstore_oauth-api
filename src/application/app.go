@@ -5,9 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/KatherineEbel/bookstore_oauth-api/src/domain/accessToken"
 	h "github.com/KatherineEbel/bookstore_oauth-api/src/http"
 	"github.com/KatherineEbel/bookstore_oauth-api/src/repository/db"
+	"github.com/KatherineEbel/bookstore_oauth-api/src/repository/rest"
+	accessToken2 "github.com/KatherineEbel/bookstore_oauth-api/src/services/accessToken"
 )
 
 var (
@@ -15,9 +16,9 @@ var (
 )
 
 func Start() {
-	tokenHandler := h.Handler(accessToken.Service(db.Repository()))
-	router.GET("/oauth/accessToken/:id", tokenHandler.GetById)
-	router.POST("/oauth/accessToken", tokenHandler.Create)
+	tokenHandler := h.Handler(accessToken2.Service(db.Repository(), rest.Repository()))
+	router.GET("/oauth/access_token/:id", tokenHandler.GetById)
+	router.POST("/oauth/access_token", tokenHandler.Create)
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalln(err)
 	}
